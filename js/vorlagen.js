@@ -343,6 +343,42 @@
     s += `<rect x="${-w / 2 + 10}" y="${-h / 2 + 10}" width="${w - 20}" height="${h - 20}" rx="2" fill="none" stroke="${dunkel(f, .12)}" stroke-width="1" stroke-dasharray="3 3" vector-effect="non-scaling-stroke"/>`;
     return s;
   };
+  // Teppich mit Tiger-/Fleckenmuster: helle Wolle, gezackte dunkle Streifen,
+  // die von einer Mittelachse fischgrätartig nach außen laufen. f = Fleckenfarbe.
+  Z.teppichTiger = (w, h, f, it) => {
+    const grund = it.grund || '#ece6da';
+    let seed = 7;
+    const zufall = () => { seed = (seed * 16807) % 2147483647; return (seed - 1) / 2147483646; };
+    const id = 'tg' + Math.round(w) + 'x' + Math.round(h);
+    let s = `<defs><clipPath id="${id}"><rect x="${-w / 2}" y="${-h / 2}" width="${w}" height="${h}" rx="2"/></clipPath></defs>`;
+    s += `<rect x="${-w / 2}" y="${-h / 2}" width="${w}" height="${h}" rx="2" fill="${grund}"/>`;
+    s += `<g clip-path="url(#${id})" fill="${f}">`;
+    const lang = h >= w, L = lang ? h : w, B = lang ? w : h;
+    const abstand = 8, steigM = .2, start = -L / 2 - 4, ende = L / 2 + B / 2 * (steigM + .08) + 6;
+    for (let a = start; a < ende; a += abstand * (.8 + zufall() * .45)) {
+      [-1, 1].forEach(seite => {
+        let q = zufall() * 3;
+        while (q < B / 2 + 4) {
+          const len = 6 + zufall() * 18, dick = 3 + zufall() * 4, steig = steigM + (zufall() - .5) * .1;
+          const q1 = q + len, n = 6, pts = [];
+          for (let i = 0; i <= n; i++) {
+            const t = q + len * i / n, prof = Math.sin(Math.PI * (.12 + .76 * i / n));
+            pts.push([t, a - t * steig - dick * prof / 2 + (zufall() - .5) * 1.4]);
+          }
+          for (let i = n; i >= 0; i--) {
+            const t = q + len * i / n, prof = Math.sin(Math.PI * (.12 + .76 * i / n));
+            pts.push([t, a - t * steig + dick * prof / 2 + (zufall() - .5) * 1.4]);
+          }
+          const d = pts.map(([qq, aa], i) => { const x = lang ? seite * qq : aa, y = lang ? aa : seite * qq; return (i ? 'L' : 'M') + x.toFixed(1) + ' ' + y.toFixed(1); }).join('') + 'Z';
+          s += `<path d="${d}"/>`;
+          q = q1 + 1.2 + zufall() * 4.5;
+        }
+      });
+    }
+    s += `</g><rect x="${-w / 2}" y="${-h / 2}" width="${w}" height="${h}" rx="2" fill="none" stroke="${dunkel(grund, .25)}" ${S}/>`;
+    return s;
+  };
+
   Z.teppichRund = (w, h, f) => `<ellipse rx="${w / 2}" ry="${h / 2}" fill="${f}" stroke="${dunkel(f, .2)}" ${S}/><ellipse rx="${w / 2 - 10}" ry="${h / 2 - 10}" fill="none" stroke="${dunkel(f, .12)}" stroke-dasharray="3 3" vector-effect="non-scaling-stroke"/>`;
 
   Z.pflanze = (w, h, f) => {
@@ -521,6 +557,7 @@
       ['Couchtisch schwarz gebürstet 40×40', 'metallTisch', 40, 40, '#2a2a2c', 0, { notiz: 'Kleiner quadratischer Couchtisch, gebürstetes Schwarz, 40 × 40 cm.' }],
       ['Couchtisch schwarz gebürstet 34×34', 'metallTisch', 34, 34, '#2a2a2c', 0, { notiz: 'Kleiner quadratischer Couchtisch, gebürstetes Schwarz, 34 × 34 cm.' }],
       ['Drehstuhl IKEA KRYLBO (Tonerud blau)', 'drehstuhl4', 63, 63, '#2f5aa8', 0, { preis: 59.99, link: 'https://www.ikea.com/de/de/p/krylbo-drehstuhl-tonerud-blau-50573591/', notiz: 'KRYLBO Drehstuhl: Fuß Ø 63 cm, Sitz 55 B × 58 T, Höhe 77–88 cm, Sitzhöhe 46–58 cm. Zweite-Chance-Angebot 59,99 € (statt 79,99 €).' }],
+      ['Teppich Tiger schwarz-weiß', 'teppichTiger', 160, 230, '#232326', 0, { ebene: 'boden', grund: '#ece6da', notiz: 'Schwarz-weiß gefleckter Teppich (Tigermuster). Größe angenommen 160 × 230 cm – rechts anpassen.' }],
       ['Schreibtischplatte Büro Tom (Nussbaum)', 'holzplatte', 186, 63.5, '#7a4e2d', 100, { notiz: 'Massivholz-Arbeitsplatte Nussbaum, 186 × 63,5 cm, Stärke 3,8 cm.' }],
     ],
     'Wohnen': [
@@ -535,6 +572,7 @@
       ['Sideboard', 'board', 160, 45, '#c8a77e', 70],
       ['Bücherregal', 'regal', 80, 35, '#e9e4dc', 70],
       ['Teppich 200×300', 'teppich', 300, 200, '#d9cbb5', 0, { ebene: 'boden' }],
+      ['Teppich Tigermuster', 'teppichTiger', 160, 230, '#232326', 0, { ebene: 'boden', grund: '#ece6da' }],
       ['Teppich rund Ø200', 'teppichRund', 200, 200, '#c9b9a6', 0, { ebene: 'boden' }],
       ['Stehlampe', 'lampe', 40, 40, '#e8c66a', 0],
       ['Pflanze', 'pflanze', 55, 55, '#5f8f4e', 0],

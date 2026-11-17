@@ -19,7 +19,7 @@ const CONFIG = {
 };
 // Toms Kennung in DIESEM Projekt (UIDs gelten pro Projekt). Leer = noch nicht eingetragen;
 // dann entscheiden allein die Datenbank-Regeln.
-const TOM = '';
+const TOM = 'egkFnuTDNYRdV25HVFwumS02Qp23';
 const WURZEL = 'wohnplaner';
 
 const app = initializeApp(CONFIG, 'wohnplaner');

@@ -14,8 +14,8 @@ Die Kennung (UID) gilt nur in diesem Projekt; sie steht auch in `js/cloud.js` (`
 
 ```json
 "wohnplaner": {
-  ".read":  "auth != null && auth.uid === 'QywuB8eYlOPmTjXCI5I9itdLhsq2'",
-  ".write": "auth != null && auth.uid === 'QywuB8eYlOPmTjXCI5I9itdLhsq2'",
+  ".read":  "auth != null && auth.uid === 'egkFnuTDNYRdV25HVFwumS02Qp23'",
+  ".write": "auth != null && auth.uid === 'egkFnuTDNYRdV25HVFwumS02Qp23'",
   "index": {
     "$id": {
       ".validate": "$id.matches(/^[a-z0-9]{6,24}$/) && newData.hasChildren(['name', 'stand'])",
