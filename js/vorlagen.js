@@ -314,6 +314,23 @@
     return s;
   };
 
+  // Regal Industrial (FJÄLLBO): Holzplatte oben, schwarzer Metallrahmen mit Eckpfosten und Mittelpfosten
+  Z.regalIndustrie = (w, h, f, it) => {
+    const metall = it.rahmen || '#1f1f21', pf = Math.min(3, w * .04);
+    let s = `<rect x="${-w / 2}" y="${-h / 2}" width="${w}" height="${h}" rx="1" fill="${metall}"/>`;
+    s += `<rect x="${-w / 2 + .6}" y="${-h / 2 + .6}" width="${w - 1.2}" height="${h - 1.2}" fill="${f}"/>`;
+    const n = Math.max(4, Math.round(h / 5));
+    for (let i = 0; i < n; i++) {
+      const t = ((i * 37) % 7) / 7, y = -h / 2 + .6 + i * (h - 1.2) / n;
+      s += `<rect x="${-w / 2 + .6}" y="${y}" width="${w - 1.2}" height="${(h - 1.2) / n + .1}" fill="${t < .4 ? dunkel(f, .05 + t * .12) : hell(f, (t - .4) * .2)}"/>`;
+      s += `<line x1="${-w / 2 + 1}" y1="${y + 1.3}" x2="${w / 2 - 1}" y2="${y + 1.1 + t}" stroke="${dunkel(f, .18)}" stroke-width=".25"/>`;
+    }
+    [[-1, -1], [1, -1], [-1, 1], [1, 1], [0, -1], [0, 1]].forEach(([kx, ky]) =>
+      s += `<rect x="${kx * (w / 2 - pf / 2) - pf / 2}" y="${ky * (h / 2 - pf / 2) - pf / 2}" width="${pf}" height="${pf}" fill="${metall}"/>`);
+    s += `<rect x="${-w / 2}" y="${-h / 2}" width="${w}" height="${h}" rx="1" fill="none" stroke="${metall}" ${S}/>`;
+    return s;
+  };
+
   Z.schreibtisch = (w, h, f) => {
     let s = Z.tisch(w, h, f);
     s += rr(-28, -h / 2 + 6, 56, 6, 1, '#2b2b2b'); // Bildschirm
@@ -577,6 +594,7 @@
       ['Drehstuhl IKEA KRYLBO (Tonerud blau)', 'drehstuhl4', 63, 63, '#2f5aa8', 0, { preis: 59.99, link: 'https://www.ikea.com/de/de/p/krylbo-drehstuhl-tonerud-blau-50573591/', notiz: 'KRYLBO Drehstuhl: Fuß Ø 63 cm, Sitz 55 B × 58 T, Höhe 77–88 cm, Sitzhöhe 46–58 cm. Zweite-Chance-Angebot 59,99 € (statt 79,99 €).' }],
       ['Teppich Tiger schwarz-weiß', 'teppichTiger', 160, 230, '#232326', 0, { ebene: 'boden', grund: '#ece6da', notiz: 'Schwarz-weiß gefleckter Teppich (Tigermuster). Größe angenommen 160 × 230 cm – rechts anpassen.' }],
       ['Stuhl Roma (Draht, Chrom)', 'drahtstuhl', 44, 47, '#a9afb6', 0, { link: 'https://northdeco.com/de-de/products/silla-de-metal-roma?variant=56341861433730', notiz: 'Metallstuhl Roma (North Deco), Drahtgitter verchromt: 44 B × 47 T × 83,5 H cm, Sitzhöhe 48,5 cm.' }],
+      ['Regal IKEA FJÄLLBO (schwarz)', 'regalIndustrie', 100, 36, '#b48a5c', 60, { rahmen: '#1f1f21', link: 'https://www.ikea.com/de/de/p/fjaellbo-regal-schwarz-50339292/', notiz: 'FJÄLLBO Regal schwarz: 100 B × 36 T × 95 H cm. Oben offen mit 2 Holzböden, unten 2 Gittertüren (Freifläche zum Öffnen).' }],
       ['Schreibtischplatte Büro Tom (Nussbaum)', 'holzplatte', 186, 63.5, '#7a4e2d', 100, { notiz: 'Massivholz-Arbeitsplatte Nussbaum, 186 × 63,5 cm, Stärke 3,8 cm.' }],
     ],
     'Wohnen': [
@@ -590,6 +608,7 @@
       ['Fernseher 65″', 'tv', 146, 8, '#1d1d1f', 0],
       ['Sideboard', 'board', 160, 45, '#c8a77e', 70],
       ['Bücherregal', 'regal', 80, 35, '#e9e4dc', 70],
+      ['Regal Metall/Holz', 'regalIndustrie', 100, 36, '#b48a5c', 60, { rahmen: '#1f1f21' }],
       ['Teppich 200×300', 'teppich', 300, 200, '#d9cbb5', 0, { ebene: 'boden' }],
       ['Teppich Tigermuster', 'teppichTiger', 160, 230, '#232326', 0, { ebene: 'boden', grund: '#ece6da' }],
       ['Teppich rund Ø200', 'teppichRund', 200, 200, '#c9b9a6', 0, { ebene: 'boden' }],
