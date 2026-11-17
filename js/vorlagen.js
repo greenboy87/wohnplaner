@@ -557,6 +557,37 @@
   };
   Z.sitzsack = (w, h, f) => `<path d="M0 ${-h / 2} C${w * .45} ${-h / 2} ${w / 2} ${-h * .1} ${w * .45} ${h * .2} C${w * .35} ${h / 2} ${-w * .35} ${h / 2} ${-w * .45} ${h * .2} C${-w / 2} ${-h * .1} ${-w * .45} ${-h / 2} 0 ${-h / 2}Z" fill="${f}" stroke="${dunkel(f, .4)}" ${S}/><ellipse cx="0" cy="${h * .08}" rx="${w * .25}" ry="${h * .2}" fill="${hell(f, .15)}"/>`;
 
+  // Papagei (Ara) von oben: Kopf vorne/oben, Flügel blau-gelb, langer Schwanz. f = Körperfarbe.
+  Z.papagei = (w, h, f) => {
+    const sx = w / 36, sy = h / 90;
+    const g = (inner) => `<g transform="scale(${sx} ${sy})">${inner}</g>`;
+    const st = `stroke="${dunkel(f, .45)}" stroke-width=".8" vector-effect="non-scaling-stroke"`;
+    let t = '';
+    // Schwanzfedern
+    t += `<path d="M-5 8 L-7 44 L-2 45 L0 10 Z" fill="${f}" ${st}/>`;
+    t += `<path d="M5 8 L7 44 L2 45 L0 10 Z" fill="#2b62c9" ${st}/>`;
+    t += `<path d="M-2 10 L-1.5 45 L1.5 45 L2 10 Z" fill="${dunkel(f, .1)}" ${st}/>`;
+    // Flügel
+    t += `<path d="M-8 -14 Q-19 -2 -14 24 Q-9 18 -5 6 Z" fill="#2b62c9" ${st}/>`;
+    t += `<path d="M8 -14 Q19 -2 14 24 Q9 18 5 6 Z" fill="#2b62c9" ${st}/>`;
+    t += `<path d="M-8 -14 Q-15 -8 -14 2 Q-10 -2 -7 -6 Z" fill="#f2c230" ${st}/>`;
+    t += `<path d="M8 -14 Q15 -8 14 2 Q10 -2 7 -6 Z" fill="#f2c230" ${st}/>`;
+    for (let i = 0; i < 4; i++) {
+      t += `<path d="M${-12 + i * .6} ${4 + i * 5} q-3 2 -2.5 5" fill="none" stroke="#1a3f8a" stroke-width=".6" vector-effect="non-scaling-stroke"/>`;
+      t += `<path d="M${12 - i * .6} ${4 + i * 5} q3 2 2.5 5" fill="none" stroke="#1a3f8a" stroke-width=".6" vector-effect="non-scaling-stroke"/>`;
+    }
+    // Körper
+    t += `<ellipse cx="0" cy="-4" rx="8.5" ry="15" fill="${f}" ${st}/>`;
+    // Kopf
+    t += `<circle cx="0" cy="-23" r="7" fill="${f}" ${st}/>`;
+    t += `<ellipse cx="-4.2" cy="-25" rx="2.3" ry="3" fill="#fff"/><ellipse cx="4.2" cy="-25" rx="2.3" ry="3" fill="#fff"/>`;
+    t += `<circle cx="-4.4" cy="-25.4" r="1" fill="#111"/><circle cx="4.4" cy="-25.4" r="1" fill="#111"/>`;
+    // Schnabel
+    t += `<path d="M-4 -27.5 Q0 -41 4 -27.5 Q0 -30 -4 -27.5 Z" fill="#d9c9a8" stroke="#3a3a3a" stroke-width=".7" vector-effect="non-scaling-stroke"/>`;
+    t += `<path d="M-1.4 -31 Q0 -35 1.4 -31" fill="none" stroke="#3a3a3a" stroke-width=".5" vector-effect="non-scaling-stroke"/>`;
+    return g(t);
+  };
+
   Z.notiz = (w, h, f, it) => {
     const txt = (it.notiz || it.name || '').slice(0, 120);
     return `<rect x="${-w / 2}" y="${-h / 2}" width="${w}" height="${h}" fill="${f}" stroke="${dunkel(f, .25)}" ${S}/><path d="M${w / 2 - 12} ${h / 2} L${w / 2} ${h / 2 - 12} L${w / 2} ${h / 2}Z" fill="${dunkel(f, .15)}"/>`;
@@ -675,6 +706,9 @@
       ['Waschmaschine', 'wama', 60, 60, '#f2f2f2', 90],
       ['Trockner', 'wama', 60, 60, '#f2f2f2', 90],
       ['Wäscheständer', 'waeschestaender', 180, 60, '#cccccc', 0],
+    ],
+    'Tiere & Spaß': [
+      ['Papagei (Ara)', 'papagei', 36, 90, '#d7262e', 0, { ebene: 'oben', notiz: 'Nur zum Spaß 🦜 – ein Ara ist mit Schwanz etwa 85–90 cm lang.' }],
     ],
     'Formen & Notizen': [
       ['Rechteck', 'rechteck', 100, 60, '#9db4c0', 0],
