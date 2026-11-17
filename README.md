@@ -7,7 +7,7 @@ mehrere Varianten. Sync über Firebase (nur mit Toms Google-Konto).
 - `js/grundriss.js` – Grundriss in Metern (aus dem Maß-PDF übernommen)
 - `js/vorlagen.js` – Möbelkatalog und Draufsicht-Zeichnungen (Einheit cm)
 - `js/app.js` – Editor
-- `js/cloud.js` – Firebase-Sync (Projekt school-tool-cbbf9, Knoten `wohnplaner/`)
+- `js/cloud.js` – Firebase-Sync (eigenes Projekt wohnplaner-394d5, Knoten `wohnplaner/`)
 - `firebase-regeln.md` – Regeln, die in der Firebase Console eingetragen werden
 
 Die Seite ist mit `noindex` markiert und nirgends verlinkt. Die Daten liegen nicht

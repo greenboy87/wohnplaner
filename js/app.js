@@ -906,6 +906,7 @@
         ${feld('Freifläche vorne', `<input id="i-zone" type="number" step="5" min="0" value="${it.zone || 0}">`)}
       </div>
       <div class="knoepfe klein"><button data-a="r-90">⟲ 90°</button><button data-a="r90">⟳ 90°</button><button data-a="spiegel">⇋ Spiegeln</button></div>
+      ${it.palette ? feld('Lieferbare Farben', `<div class="farben">${it.palette.map(([n, c]) => `<button class="farbe${c.toLowerCase() === String(it.farbe).toLowerCase() ? ' an' : ''}" data-farbe="${c}" style="background:${c}" title="${esc(n)}"></button>`).join('')}<span class="hinweis" style="margin:0 0 0 4px">${esc((it.palette.find(([, c]) => c.toLowerCase() === String(it.farbe).toLowerCase()) || ['eigene Farbe'])[0])}</span></div>`) : ''}
       ${it.zeichnung !== 'bild' ? feld('Farbe', farbFeld('i-farbe', it.farbe, FARBEN)) : ''}
       ${feld('Deckkraft', `<input id="i-deck" type="range" min="0.15" max="1" step="0.05" value="${it.deckkraft ?? 1}">`)}
       ${feld('Ebene', `<select id="i-ebene"><option value="boden"${it.ebene === 'boden' ? ' selected' : ''}>Boden (Teppich – darf überlappen)</option><option value="moebel"${(it.ebene || 'moebel') === 'moebel' ? ' selected' : ''}>Möbel</option><option value="oben"${it.ebene === 'oben' ? ' selected' : ''}>Obenauf (Notiz/Bild)</option></select>`)}

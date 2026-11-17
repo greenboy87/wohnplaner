@@ -1,4 +1,4 @@
-/* Sync über Firebase (Projekt school-tool-cbbf9, Knoten wohnplaner/).
+/* Sync über Firebase (eigenes Projekt wohnplaner-394d5, Spark-Tarif, Knoten wohnplaner/).
    Lesen und Schreiben darf nur Toms Google-Konto (siehe firebase-regeln.md).
    Sparsam: Die Liste der Varianten ist winzig (Name + Stand). Eine Variante wird nur
    geladen, wenn sie woanders neuer ist. Bilder werden pro Gerät genau einmal geholt
@@ -11,13 +11,15 @@ import {
 } from 'https://www.gstatic.com/firebasejs/10.13.0/firebase-auth.js';
 
 const CONFIG = {
-  apiKey: 'AIzaSyCcSe6xfc8Oy4MP_swuBSGEhY0K7wstjEo',
-  authDomain: 'school-tool-cbbf9.firebaseapp.com',
-  databaseURL: 'https://school-tool-cbbf9-default-rtdb.europe-west1.firebasedatabase.app',
-  projectId: 'school-tool-cbbf9',
-  appId: '1:1065429467632:web:db719f5cd24e8631dd9d35',
+  apiKey: 'AIzaSyASanfBQn01J2eNEKXK0w5AU_liZ2ehE-w',
+  authDomain: 'wohnplaner-394d5.firebaseapp.com',
+  databaseURL: 'https://wohnplaner-394d5-default-rtdb.europe-west1.firebasedatabase.app',
+  projectId: 'wohnplaner-394d5',
+  appId: '1:97897565666:web:38a2b51b40d7b941b3fdbb',
 };
-const TOM = 'QywuB8eYlOPmTjXCI5I9itdLhsq2';
+// Toms Kennung in DIESEM Projekt (UIDs gelten pro Projekt). Leer = noch nicht eingetragen;
+// dann entscheiden allein die Datenbank-Regeln.
+const TOM = '';
 const WURZEL = 'wohnplaner';
 
 const app = initializeApp(CONFIG, 'wohnplaner');
@@ -32,7 +34,7 @@ const Cloud = {
   init(beiAenderung) {
     onAuthStateChanged(auth, u => {
       this.user = u;
-      this.erlaubt = !!u && u.uid === TOM;
+      this.erlaubt = !!u && (!TOM || u.uid === TOM);
       beiAenderung(u, this.erlaubt);
     });
   },

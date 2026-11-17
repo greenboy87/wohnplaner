@@ -302,6 +302,23 @@
     s += rr(-22, -h / 2 + 22, 44, 14, 2, '#e8e8e8'); // Tastatur
     return s;
   };
+  // Drehstuhl mit 4-Stern-Fuß (KRYLBO): Fuß Ø = Breite, Sitz rund, Rückenschale hinten
+  Z.drehstuhl4 = (w, h, f) => {
+    let s = '';
+    const fuss = dunkel(f, .1), rS = Math.min(w, h) / 2;
+    [45, 135, 225, 315].forEach(a => {
+      const x = Math.cos(rad(a)) * rS, y = Math.sin(rad(a)) * rS;
+      s += `<line x1="0" y1="0" x2="${x}" y2="${y}" stroke="${fuss}" stroke-width="3.2" stroke-linecap="round"/>`;
+      s += `<circle cx="${x}" cy="${y}" r="2.2" fill="${dunkel(f, .3)}"/>`;
+    });
+    const sw = w * .87 / 2, sh = h * .4;
+    s += `<ellipse cx="0" cy="${h * .06}" rx="${sw * .93}" ry="${sh * .95}" fill="${f}" stroke="${dunkel(f, .35)}" ${S}/>`;
+    s += `<ellipse cx="0" cy="${h * .08}" rx="${sw * .7}" ry="${sh * .7}" fill="${hell(f, .08)}"/>`;
+    s += `<path d="M${-sw} ${-h * .1} Q${-sw} ${-h * .44} 0 ${-h * .44} Q${sw} ${-h * .44} ${sw} ${-h * .1} Q${sw * .6} ${-h * .27} 0 ${-h * .28} Q${-sw * .6} ${-h * .27} ${-sw} ${-h * .1} Z" fill="${dunkel(f, .12)}" stroke="${dunkel(f, .4)}" ${S}/>`;
+    return s;
+  };
+  const rad = d => d * Math.PI / 180;
+
   Z.buerostuhl = (w, h, f) => {
     let s = '';
     for (let i = 0; i < 5; i++) {
@@ -493,7 +510,7 @@
   // [Name, Zeichnung, Breite, Tiefe, Farbe, Bewegungsfläche vorne, Extras]
   const K = {
     'Meine Möbel': [
-      ['Couch Maleron L-Form (Samt Dunkelblau, links)', 'maleron', 265, 160, '#26398f', 50, { tiefe: 93, chaise: 95, link: 'https://www.sofa-dreams.com/products/ecksofa-maleron-l-form-kurz', notiz: 'Maleron Kurz, L-Form, Samtstoff Dunkelblau, Liegeteil links. Höhe 70 cm, Sitzhöhe 42 cm, Sitztiefe 65 cm. Breite des Liegeteils geschätzt (95 cm) – bitte nachmessen.' }],
+      ['Couch Maleron L-Form (Samt Dunkelblau, links)', 'maleron', 265, 160, '#26398f', 50, { tiefe: 93, chaise: 95, link: 'https://www.sofa-dreams.com/products/ecksofa-maleron-l-form-kurz', palette: [['Schwarz', '#1f1f21'], ['Hellgrau', '#bdbebf'], ['Greige', '#b9b0a7'], ['Taupe', '#9b8669'], ['Dunkelblau', '#26398f'], ['Grau', '#7d7e81'], ['Beige', '#e3cbb0']], notiz: 'Maleron Kurz, L-Form, Samtstoff Dunkelblau, Liegeteil links. Höhe 70 cm, Sitzhöhe 42 cm, Sitztiefe 65 cm. Breite des Liegeteils geschätzt (95 cm) – bitte nachmessen.' }],
       ['Korg E-Piano SP-250', 'korg', 129.5, 38, '#1c1a1a', 80, { notiz: 'Korg SP-250: 1.295 × 380 × 140 mm (B × T × H).' }],
       ['Roland E-Drums', 'roland', 160, 100, '#222222', 60, { notiz: 'Roland V-Drums, ca. 160 × 100 cm. Freifläche vorne = Platz für Hocker und Spieler.' }],
       ['Sideboard weiß / Holzplatte', 'sideboardHolz', 180, 35, '#b98a5c', 70, { notiz: 'Sideboard 180 × 35 cm, weiße Fronten (3 Klappen), Holzplatte oben.' }],
@@ -503,6 +520,7 @@
       ['Tisch Oval (Säulenfüße)', 'tischOval', 160, 90, '#6b4a2f', 75, { notiz: 'Ovaler Esstisch mit zwei geriffelten Säulenfüßen, 160–200 × 90 cm, Höhe 75 cm. Breite, Tiefe und Farbe rechts frei einstellbar. Freifläche = Platz zum Stuhl-Zurückschieben (auf beiden Langseiten nötig).' }],
       ['Couchtisch schwarz gebürstet 40×40', 'metallTisch', 40, 40, '#2a2a2c', 0, { notiz: 'Kleiner quadratischer Couchtisch, gebürstetes Schwarz, 40 × 40 cm.' }],
       ['Couchtisch schwarz gebürstet 34×34', 'metallTisch', 34, 34, '#2a2a2c', 0, { notiz: 'Kleiner quadratischer Couchtisch, gebürstetes Schwarz, 34 × 34 cm.' }],
+      ['Drehstuhl IKEA KRYLBO (Tonerud blau)', 'drehstuhl4', 63, 63, '#2f5aa8', 0, { preis: 59.99, link: 'https://www.ikea.com/de/de/p/krylbo-drehstuhl-tonerud-blau-50573591/', notiz: 'KRYLBO Drehstuhl: Fuß Ø 63 cm, Sitz 55 B × 58 T, Höhe 77–88 cm, Sitzhöhe 46–58 cm. Zweite-Chance-Angebot 59,99 € (statt 79,99 €).' }],
       ['Schreibtischplatte Büro Tom (Nussbaum)', 'holzplatte', 186, 63.5, '#7a4e2d', 100, { notiz: 'Massivholz-Arbeitsplatte Nussbaum, 186 × 63,5 cm, Stärke 3,8 cm.' }],
     ],
     'Wohnen': [
@@ -549,6 +567,7 @@
       ['Schreibtisch 160×80', 'schreibtisch', 160, 80, '#d7c3a5', 100],
       ['Schreibtisch 120×60', 'schreibtisch', 120, 60, '#d7c3a5', 100],
       ['Bürostuhl', 'buerostuhl', 65, 65, '#3d4450', 0],
+      ['Drehstuhl 4-Fuß', 'drehstuhl4', 63, 63, '#2f5aa8', 0],
       ['Regal 80×40', 'regal', 80, 40, '#e9e4dc', 70],
       ['Aktenschrank', 'kommode', 80, 40, '#e9e4dc', 70],
     ],

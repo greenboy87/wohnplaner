@@ -1,17 +1,16 @@
 # Datenbank-Regeln für den Wohnplaner
 
-Der Wohnplaner speichert im Firebase-Projekt **school-tool-cbbf9** unter dem Knoten
+Der Wohnplaner speichert im eigenen Firebase-Projekt **wohnplaner-394d5** (Spark-Tarif, kostenlos) unter dem Knoten
 `wohnplaner/`. Lesen und schreiben darf nur Toms Google-Konto.
 
 ## Einmalig einrichten
 
-1. Firebase Console → Projekt **school-tool-cbbf9** → Realtime Database → **Regeln**.
-2. Im bestehenden Regelwerk innerhalb von `"rules": { … }` **neben** `"schoolTool"`
-   den Block unten einfügen (Komma nicht vergessen).
+1. Firebase Console → Projekt **wohnplaner** → Realtime Database → **Regeln**.
+2. Das gesamte Regelwerk ersetzen durch `{ "rules": { <Block unten> } }`.
 3. **Veröffentlichen**.
 
-Die Google-Anmeldung und die Domain `greenboy87.github.io` sind dort schon freigeschaltet
-(werden vom School-Tool genutzt).
+Google-Anmeldung und Domain `greenboy87.github.io` sind eingerichtet (17.11.2026).
+Die Kennung (UID) gilt nur in diesem Projekt; sie steht auch in `js/cloud.js` (`TOM`).
 
 ```json
 "wohnplaner": {
