@@ -48,7 +48,7 @@
   };
   let daten = ls.get(LS) || { setups: {}, aktuell: null, eigene: [], eigeneStand: 0, hochgeladen: {} };
   daten.eigene = daten.eigene || []; daten.hochgeladen = daten.hochgeladen || {};
-  const ANSICHT_STD = { masse: 1, namen: true, moebelmasse: true, abstaende: true, zonen: true, tueren: true, raster: false, magnet: true, warnungen: true };
+  const ANSICHT_STD = { masse: 1, namen: true, moebelmasse: true, abstaende: true, zonen: true, tueren: true, raster: false, magnet: true, warnungen: true, papagei: true };
   let ansicht = Object.assign({}, ANSICHT_STD, ls.get(LS_ANSICHT) || {});
 
   function neuesSetup(name) {
@@ -274,7 +274,7 @@
   const svg = $('#plan');
   const welt = $('#welt');
   const L = {};
-  ['bau', 'raster', 'tuer', 'boden', 'zonen', 'moebel', 'oben', 'beschr', 'mass', 'raum', 'auswahl'].forEach(n => {
+  ['bau', 'raster', 'tuer', 'boden', 'zonen', 'moebel', 'oben', 'papagei', 'beschr', 'mass', 'raum', 'auswahl'].forEach(n => {
     const g = document.createElementNS(NS, 'g'); g.id = 'l-' + n; welt.appendChild(g); L[n] = g;
   });
   const px = n => n / zoom; // Bildschirmpixel in cm
@@ -1100,6 +1100,7 @@
     const k = b.dataset.ansicht;
     ansicht[k] = k === 'masse' ? (ansicht.masse + 1) % 3 : !ansicht[k];
     ls.set(LS_ANSICHT, ansicht);
+    if (k === 'papagei') papageiZeigen();
     ansichtKnoepfe(); zeichneRaster(); zeichneTueren(); zeichneRaumNamen(); zeichneItems();
   }));
 
@@ -1288,10 +1289,56 @@
   if (window.Cloud) cloudStart(); else window.addEventListener('cloud-bereit', cloudStart, { once: true });
   document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible') abgleich(); });
 
+  // ---------- Papagei: wohnt in der Wohnung und sucht sich ab und zu einen neuen Platz ----------
+  // Er ist kein gespeichertes Möbel (nichts wird synchronisiert) und zählt nicht bei Kollisionen.
+  const PAPAGEI = { w: 30, h: 75, farbe: '#d7262e', alle: 10 * 60 * 1000 }; // alle 10 Minuten
+  let papagei = null, papageiT = 0;
+  function papageiPlatz() {
+    const moebel = akt().items.filter(i => i.zeichnung !== 'mass' && i.zeichnung !== 'papagei' && (i.ebene || 'moebel') === 'moebel' && i.w > 35 && i.h > 25);
+    // manchmal setzt er sich auf ein Möbel, sonst irgendwo frei in einen Raum
+    if (moebel.length && Math.random() < .45) {
+      const m = moebel[Math.floor(Math.random() * moebel.length)];
+      const ox = (Math.random() - .5) * m.w * .5, oy = (Math.random() - .5) * m.h * .4, c = Math.cos(rad(m.rot || 0)), sn = Math.sin(rad(m.rot || 0));
+      return { x: m.x + ox * c - oy * sn, y: m.y + ox * sn + oy * c, rot: Math.round(Math.random() * 360) };
+    }
+    const summe = G.rooms.reduce((a, r) => a + r.flaeche, 0);
+    let z = Math.random() * summe, raum = G.rooms[0];
+    for (const r of G.rooms) { z -= r.flaeche; if (z <= 0) { raum = r; break; } }
+    for (let i = 0; i < 40; i++) {
+      const [x0, y0, x1, y1] = raum.box;
+      const x = x0 + 25 + Math.random() * Math.max(1, x1 - x0 - 50), y = y0 + 40 + Math.random() * Math.max(1, y1 - y0 - 80);
+      if (inPoly(x, y, raum.poly)) return { x, y, rot: Math.round(Math.random() * 360) };
+    }
+    return { x: (raum.box[0] + raum.box[2]) / 2, y: (raum.box[1] + raum.box[3]) / 2, rot: 0 };
+  }
+  function papageiZeigen() {
+    clearTimeout(papageiT);
+    if (!ansicht.papagei) { L.papagei.innerHTML = ''; papagei = null; return; }
+    const ziel = papageiPlatz();
+    if (!papagei) {
+      L.papagei.innerHTML = `<g class="papagei" title="Klick = wegfliegen">${V.Z.papagei(PAPAGEI.w, PAPAGEI.h, PAPAGEI.farbe)}</g>`;
+      papagei = L.papagei.firstChild;
+      papagei.style.transform = `translate(${ziel.x}px, ${ziel.y}px) rotate(${ziel.rot}deg)`;
+    } else {
+      // in Flugrichtung drehen, hinfliegen, dann zufällig hinsetzen
+      const alt = papagei._pos || ziel;
+      const flug = Math.atan2(ziel.y - alt.y, ziel.x - alt.x) * 180 / Math.PI + 90;
+      papagei.classList.add('fliegt');
+      papagei.style.transform = `translate(${alt.x}px, ${alt.y}px) rotate(${flug}deg)`;
+      setTimeout(() => {
+        papagei.style.transform = `translate(${ziel.x}px, ${ziel.y}px) rotate(${flug}deg)`;
+        setTimeout(() => { papagei.classList.remove('fliegt'); papagei.style.transform = `translate(${ziel.x}px, ${ziel.y}px) rotate(${ziel.rot}deg)`; }, 1700);
+      }, 450);
+    }
+    papagei._pos = ziel;
+    papageiT = setTimeout(papageiZeigen, PAPAGEI.alle);
+  }
+  L.papagei.addEventListener('pointerdown', e => { e.stopPropagation(); papageiZeigen(); });
+
   // ---------- Start ----------
   window.addEventListener('resize', () => neuZeichnenBald());
   bibliothek();
   knoepfeVerlauf();
-  requestAnimationFrame(() => { einpassen(); bilderLaden(); });
+  requestAnimationFrame(() => { einpassen(); bilderLaden(); papageiZeigen(); });
   if (!ls.get('wohnplaner-hilfe-gesehen')) { ls.set('wohnplaner-hilfe-gesehen', 1); setTimeout(() => dialog($('#hilfe-vorlage').innerHTML, true), 400); }
 })();

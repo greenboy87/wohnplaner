@@ -10,11 +10,13 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <title>Wohnplaner</title>
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='7' fill='%231f2a44'/><path d='M6 26V12l10-6 10 6v14H19v-8h-6v8z' fill='%23f3c76a'/></svg>">
-<link rel="stylesheet" href="style.css?v=15">
+<link rel="stylesheet" href="style.css?v=16">
 <style id="svg-stil">
   .lbl { font-family: -apple-system, system-ui, "Segoe UI", sans-serif; pointer-events: none; }
   .lbl.halo { stroke: rgba(255,255,255,.9); stroke-width: 3px; paint-order: stroke; fill: rgba(255,255,255,.9); stroke-linejoin: round; }
   .fett { font-weight: 650; }
+  .papagei { transition: transform 1.6s cubic-bezier(.45,.05,.35,1); cursor: pointer; }
+  .papagei.fliegt { transition: transform 1.6s cubic-bezier(.45,.05,.35,1), filter .3s; filter: drop-shadow(0 8px 6px rgba(0,0,0,.25)); }
 </style>
 </head>
 <body>
@@ -39,6 +41,7 @@
     <button data-ansicht="warnungen" title="Rot markieren, wenn Möbel sich überlappen oder in der Wand stehen">Prüfen</button>
     <button data-ansicht="raster" title="Raster 50 cm">Raster</button>
     <button data-ansicht="magnet" title="An Wänden und Möbeln einrasten (Alt beim Ziehen = frei)">Magnet</button>
+    <button data-ansicht="papagei" title="Der Papagei sucht sich ab und zu einen neuen Platz">🦜</button>
   </div>
   <div class="gruppe rechts">
     <button id="b-liste" title="Übersicht mit Maßen, Preisen und Links">Liste</button>
@@ -99,9 +102,9 @@
   <div class="knoepfe"><button data-zu class="primaer">Los geht's</button></div>
 </template>
 
-<script src="js/grundriss.js?v=15"></script>
-<script src="js/vorlagen.js?v=15"></script>
-<script src="js/app.js?v=15"></script>
-<script type="module" src="js/cloud.js?v=15"></script>
+<script src="js/grundriss.js?v=16"></script>
+<script src="js/vorlagen.js?v=16"></script>
+<script src="js/app.js?v=16"></script>
+<script type="module" src="js/cloud.js?v=16"></script>
 </body>
 </html>
