@@ -1060,7 +1060,7 @@
     dialog(`<h3>Eigenes Möbel</h3>
       <label class="feld"><span>Name</span><input id="e-name" value="Mein Möbel"></label>
       <div class="reihe"><label class="feld"><span>Breite (cm)</span><input id="e-w" type="number" value="100"></label><label class="feld"><span>Tiefe (cm)</span><input id="e-h" type="number" value="50"></label></div>
-      <label class="feld"><span>Form</span><select id="e-z"><option value="rechteck">Rechteck</option><option value="kreis">Rund / oval</option><option value="tisch">Tisch</option><option value="schrank">Schrank</option><option value="kommode">Kommode</option><option value="regal">Regal</option><option value="sofa">Sofa</option><option value="bett">Bett</option><option value="holzplatte">Holzplatte</option><option value="piano">Tasteninstrument</option></select></label>
+      <label class="feld"><span>Form</span><select id="e-z"><option value="rechteck">Rechteck</option><option value="kreis">Rund / oval</option><option value="tisch">Tisch</option><option value="tischOval">Tisch oval</option><option value="schrank">Schrank</option><option value="kommode">Kommode</option><option value="regal">Regal</option><option value="sofa">Sofa</option><option value="bett">Bett</option><option value="holzplatte">Holzplatte</option><option value="piano">Tasteninstrument</option></select></label>
       <label class="feld"><span>Freifläche vorne (cm)</span><input id="e-zone" type="number" value="0"></label>
       <label class="feld"><span>Farbe</span><input id="e-f" type="color" value="#9db4c0"></label>
       <div class="knoepfe"><button id="e-ok" class="primaer">Einfügen</button><button data-zu>Abbrechen</button></div>`);

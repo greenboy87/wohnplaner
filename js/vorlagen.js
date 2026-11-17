@@ -180,6 +180,38 @@
   };
 
   Z.tisch = (w, h, f) => rr(-w / 2, -h / 2, w, h, 4, f) + rr(-w / 2 + 4, -h / 2 + 4, w - 8, h - 8, 3, hell(f, .12), 'stroke-opacity=".3"');
+  // Ovaler Tisch (Stadionform) mit Holzmaserung längs; zwei Säulenfüße gestrichelt darunter.
+  // Passt sich jeder Breite/Tiefe an (ausziehbar: einfach Breite ändern).
+  Z.tischOval = (w, h, f) => {
+    const r = Math.min(w, h) / 2, id = 'ov' + Math.round(w * 10) + 'x' + Math.round(h * 10) + f.slice(1);
+    const pfad = w >= h
+      ? `M${-w / 2 + r} ${-h / 2} H${w / 2 - r} A${r} ${r} 0 0 1 ${w / 2 - r} ${h / 2} H${-w / 2 + r} A${r} ${r} 0 0 1 ${-w / 2 + r} ${-h / 2} Z`
+      : `M${-w / 2} ${-h / 2 + r} A${r} ${r} 0 0 1 ${w / 2} ${-h / 2 + r} V${h / 2 - r} A${r} ${r} 0 0 1 ${-w / 2} ${h / 2 - r} Z`;
+    let s = `<defs><clipPath id="${id}"><path d="${pfad}"/></clipPath></defs>`;
+    s += `<path d="${pfad}" fill="${f}"/>`;
+    s += `<g clip-path="url(#${id})">`;
+    const lang = w >= h, n = Math.max(5, Math.round((lang ? h : w) / 9));
+    for (let i = 0; i < n; i++) {
+      const t = ((i * 37) % 7) / 7, c = t < .4 ? dunkel(f, .06 + t * .15) : hell(f, (t - .4) * .18);
+      if (lang) s += `<rect x="${-w / 2}" y="${-h / 2 + i * h / n}" width="${w}" height="${h / n + .2}" fill="${c}"/>`;
+      else s += `<rect x="${-w / 2 + i * w / n}" y="${-h / 2}" width="${w / n + .2}" height="${h}" fill="${c}"/>`;
+    }
+    for (let i = 0; i < n * 2; i++) {
+      const p = -0.5 + (i + .5) / (n * 2), a = ((i * 53) % 11) / 11;
+      if (lang) s += `<path d="M${-w / 2} ${p * h} C${-w / 6} ${p * h + 1.2 - a * 2} ${w / 6} ${p * h - 1 + a * 2} ${w / 2} ${p * h + .5}" fill="none" stroke="${dunkel(f, .2)}" stroke-width=".35"/>`;
+      else s += `<path d="M${p * w} ${-h / 2} C${p * w + 1.2 - a * 2} ${-h / 6} ${p * w - 1 + a * 2} ${h / 6} ${p * w + .5} ${h / 2}" fill="none" stroke="${dunkel(f, .2)}" stroke-width=".35"/>`;
+    }
+    s += `</g>`;
+    // Säulenfüße (Ø ca. 45 % der Tiefe), Abstand ca. 50 % der Länge
+    const d = Math.min(w, h) * .45, ab = Math.max(w, h) * .25;
+    [-1, 1].forEach(k => {
+      const cx = lang ? k * ab : 0, cy = lang ? 0 : k * ab;
+      s += `<circle cx="${cx}" cy="${cy}" r="${d / 2}" fill="none" stroke="${dunkel(f, .45)}" stroke-width="1" stroke-dasharray="4 3" vector-effect="non-scaling-stroke"/>`;
+    });
+    s += `<path d="${pfad}" fill="none" stroke="${dunkel(f, .45)}" ${S}/>`;
+    return s;
+  };
+
   Z.tischRund = (w, h, f) => Z.kreis(w, h, f) + `<ellipse cx="0" cy="0" rx="${w / 2 - 5}" ry="${h / 2 - 5}" fill="${hell(f, .12)}" stroke="none"/>`;
 
   function stuhl(x, y, rot, f) {
@@ -457,6 +489,7 @@
       ['Stuhl Matilda (Sklum, gepolstert)', 'matilda', 54, 68, '#dcd8d0', 0, { link: 'https://www.sklum.com/de/kaufen-pack-4-stuhle/220618-pack-mit-4-gepolsterten-matilda-esszimmerstuhlen.html#measures', notiz: 'Matilda Esszimmerstuhl (4er-Pack): 54 B × 68 T × 87 H cm, Sitzhöhe 50 cm, Sitzfläche 54 × 46 cm.' }],
       ['Kommode schwarz (altes Wohnzimmer)', 'kommode', 72, 34, '#232323', 70, { notiz: 'Kommode schwarz, 4 Schubladen, 72 × 34 cm.' }],
       ['Schlafsofa grau (altes Musikzimmer)', 'sofaChevron', 210, 80, '#5d5e66', 50, { notiz: 'Schlafsofa Samt grau mit Fischgrät-Steppung, 210 × 80 cm. Ausgeklappt als Bett deutlich tiefer – vor Ort nachmessen.' }],
+      ['Tisch Oval (Säulenfüße)', 'tischOval', 160, 90, '#6b4a2f', 75, { notiz: 'Ovaler Esstisch mit zwei geriffelten Säulenfüßen, 160–200 × 90 cm, Höhe 75 cm. Breite, Tiefe und Farbe rechts frei einstellbar. Freifläche = Platz zum Stuhl-Zurückschieben (auf beiden Langseiten nötig).' }],
       ['Schreibtischplatte Büro Tom (Nussbaum)', 'holzplatte', 186, 63.5, '#7a4e2d', 100, { notiz: 'Massivholz-Arbeitsplatte Nussbaum, 186 × 63,5 cm, Stärke 3,8 cm.' }],
     ],
     'Wohnen': [
@@ -490,6 +523,7 @@
     'Essen & Küche': [
       ['Esstisch 160×90 + 6 Stühle', 'esstisch', 160, 190, '#c8a77e', 0, { tw: 160, th: 90 }],
       ['Esstisch 140×80 + 4 Stühle', 'esstisch', 140, 180, '#c8a77e', 0, { tw: 140, th: 80 }],
+      ['Tisch Oval (Säulenfüße)', 'tischOval', 160, 90, '#6b4a2f', 75],
       ['Esstisch rund Ø110 + 4', 'esstischRund', 190, 190, '#c8a77e', 0, { tw: 110, stuehle: 4 }],
       ['Stuhl', 'stuhl', 45, 48, '#b38b63', 0],
       ['Küchenzeile 270', 'kueche', 270, 60, '#f1f1ef', 120],
