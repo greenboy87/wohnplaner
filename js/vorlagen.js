@@ -212,6 +212,17 @@
     return s;
   };
 
+  // Kleiner Tisch aus gebürstetem Metall: feine Schleifspuren, dünne Kante
+  Z.metallTisch = (w, h, f) => {
+    let s = rr(-w / 2, -h / 2, w, h, 1, f);
+    for (let i = 0, y = -h / 2 + 1.2; y < h / 2 - .8; i++, y += .9) {
+      const t = ((i * 7919) % 13) / 13;
+      s += `<line x1="${-w / 2 + .8}" y1="${y}" x2="${w / 2 - .8}" y2="${y + (t - .5) * .4}" stroke="${t > .5 ? hell(f, .18) : dunkel(f, .25)}" stroke-width=".25"/>`;
+    }
+    s += `<rect x="${-w / 2 + 1.5}" y="${-h / 2 + 1.5}" width="${w - 3}" height="${h - 3}" fill="none" stroke="${hell(f, .22)}" stroke-width=".6" vector-effect="non-scaling-stroke"/>`;
+    return s;
+  };
+
   Z.tischRund = (w, h, f) => Z.kreis(w, h, f) + `<ellipse cx="0" cy="0" rx="${w / 2 - 5}" ry="${h / 2 - 5}" fill="${hell(f, .12)}" stroke="none"/>`;
 
   function stuhl(x, y, rot, f) {
@@ -490,6 +501,8 @@
       ['Kommode schwarz (altes Wohnzimmer)', 'kommode', 72, 34, '#232323', 70, { notiz: 'Kommode schwarz, 4 Schubladen, 72 × 34 cm.' }],
       ['Schlafsofa grau (altes Musikzimmer)', 'sofaChevron', 210, 80, '#5d5e66', 50, { notiz: 'Schlafsofa Samt grau mit Fischgrät-Steppung, 210 × 80 cm. Ausgeklappt als Bett deutlich tiefer – vor Ort nachmessen.' }],
       ['Tisch Oval (Säulenfüße)', 'tischOval', 160, 90, '#6b4a2f', 75, { notiz: 'Ovaler Esstisch mit zwei geriffelten Säulenfüßen, 160–200 × 90 cm, Höhe 75 cm. Breite, Tiefe und Farbe rechts frei einstellbar. Freifläche = Platz zum Stuhl-Zurückschieben (auf beiden Langseiten nötig).' }],
+      ['Couchtisch schwarz gebürstet 40×40', 'metallTisch', 40, 40, '#2a2a2c', 0, { notiz: 'Kleiner quadratischer Couchtisch, gebürstetes Schwarz, 40 × 40 cm.' }],
+      ['Couchtisch schwarz gebürstet 34×34', 'metallTisch', 34, 34, '#2a2a2c', 0, { notiz: 'Kleiner quadratischer Couchtisch, gebürstetes Schwarz, 34 × 34 cm.' }],
       ['Schreibtischplatte Büro Tom (Nussbaum)', 'holzplatte', 186, 63.5, '#7a4e2d', 100, { notiz: 'Massivholz-Arbeitsplatte Nussbaum, 186 × 63,5 cm, Stärke 3,8 cm.' }],
     ],
     'Wohnen': [
