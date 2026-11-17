@@ -1274,8 +1274,10 @@
     const C = window.Cloud; if (!C) return;
     if (!C.user) { try { await C.anmelden(); } catch (e) { meldung('Anmeldung abgebrochen.', true); } return; }
     dialog(`<h3>Cloud-Speicher</h3><p>Angemeldet als <b>${esc(C.user.email || '')}</b>.</p><p class="hinweis">${C.erlaubt ? 'Alle Varianten, eigenen Vorlagen und Bilder werden automatisch gespeichert und auf deinen anderen Geräten geladen.' : 'Dieses Konto hat keinen Zugriff. Melde dich mit deinem eigenen Google-Konto an.'}</p>
-      <div class="knoepfe"><button id="c-sync">Jetzt abgleichen</button><button id="c-ab" class="gefahr">Abmelden</button><button data-zu>Schließen</button></div>`);
+      <p class="hinweis">Kennung (UID) dieses Kontos: <code id="c-uid">${esc(C.user.uid)}</code></p>
+      <div class="knoepfe"><button id="c-kopie">Kennung kopieren</button><button id="c-sync">Jetzt abgleichen</button><button id="c-ab" class="gefahr">Abmelden</button><button data-zu>Schließen</button></div>`);
     $('#c-sync').onclick = () => { dialogZu(); abgleich(); };
+    $('#c-kopie').onclick = () => { navigator.clipboard.writeText(C.user.uid).then(() => meldung('Kennung kopiert.'), () => meldung('Kopieren nicht möglich – bitte markieren.', true)); };
     $('#c-ab').onclick = () => { C.abmelden(); dialogZu(); };
   });
   function cloudStart() {
