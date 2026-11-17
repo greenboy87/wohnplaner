@@ -50,6 +50,24 @@
 
   Z.sessel = (w, h, f) => Z.sofa(w, h, f);
 
+  // Schlafsofa mit Fischgrät-Steppung im Rücken (Samt), schmale Armlehnen, 2 Sitzkissen
+  Z.sofaChevron = (w, h, f) => {
+    const arm = Math.min(16, w * .08), lehne = Math.min(22, h * .28);
+    let s = rr(-w / 2, -h / 2, w, h, 6, dunkel(f, .1));
+    s += `<rect x="${-w / 2 + arm}" y="${-h / 2}" width="${w - 2 * arm}" height="${lehne}" rx="4" fill="${f}" stroke="${dunkel(f, .35)}" ${S}/>`;
+    const y0 = -h / 2 + 2, y1 = -h / 2 + lehne - 2, n = 9, half = (w - 2 * arm) / 2;
+    for (let i = 1; i < n; i++) {
+      const d = i * half / n;
+      s += linie(-d, y0, -d - (y1 - y0) * .9, y1, dunkel(f, .25), .7);
+      s += linie(d, y0, d + (y1 - y0) * .9, y1, dunkel(f, .25), .7);
+    }
+    s += linie(0, -h / 2, 0, -h / 2 + lehne, dunkel(f, .35), 1);
+    s += rr(-w / 2, -h / 2 + 6, arm, h - 10, 6, f) + rr(w / 2 - arm, -h / 2 + 6, arm, h - 10, 6, f);
+    const sb = (w - 2 * arm) / 2;
+    for (let i = 0; i < 2; i++) s += rr(-w / 2 + arm + i * sb + 1.5, -h / 2 + lehne + 1, sb - 3, h - lehne - 4, 5, hell(f, .1));
+    return s;
+  };
+
   // L-Sofa: Rückenteil über die volle Breite (Tiefe t), Liegeteil links (Breite c).
   Z.sofaL = (w, h, f, it) => {
     const t = it.tiefe || 90, c = it.chaise || 95, lehne = 24, arm = 22;
@@ -438,6 +456,7 @@
       ['Sideboard weiß / Holzplatte', 'sideboardHolz', 180, 35, '#b98a5c', 70, { notiz: 'Sideboard 180 × 35 cm, weiße Fronten (3 Klappen), Holzplatte oben.' }],
       ['Stuhl Matilda (Sklum, gepolstert)', 'matilda', 54, 68, '#dcd8d0', 0, { link: 'https://www.sklum.com/de/kaufen-pack-4-stuhle/220618-pack-mit-4-gepolsterten-matilda-esszimmerstuhlen.html#measures', notiz: 'Matilda Esszimmerstuhl (4er-Pack): 54 B × 68 T × 87 H cm, Sitzhöhe 50 cm, Sitzfläche 54 × 46 cm.' }],
       ['Kommode schwarz (altes Wohnzimmer)', 'kommode', 72, 34, '#232323', 70, { notiz: 'Kommode schwarz, 4 Schubladen, 72 × 34 cm.' }],
+      ['Schlafsofa grau (altes Musikzimmer)', 'sofaChevron', 210, 80, '#5d5e66', 50, { notiz: 'Schlafsofa Samt grau mit Fischgrät-Steppung, 210 × 80 cm. Ausgeklappt als Bett deutlich tiefer – vor Ort nachmessen.' }],
       ['Schreibtischplatte Büro Tom (Nussbaum)', 'holzplatte', 186, 63.5, '#7a4e2d', 100, { notiz: 'Massivholz-Arbeitsplatte Nussbaum, 186 × 63,5 cm, Stärke 3,8 cm.' }],
     ],
     'Wohnen': [
