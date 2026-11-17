@@ -296,6 +296,24 @@
     return s;
   };
 
+  // Drahtstuhl (Roma): Schale aus Drahtgitter, hinten breiter und gerundet, Kufen seitlich
+  Z.drahtstuhl = (w, h, f) => {
+    const id = 'dr' + Math.round(w) + 'x' + Math.round(h) + f.slice(1);
+    const hw = w / 2, top = -h / 2 + 1, unten = h / 2 - 2;
+    const schale = `M${-hw * .92} ${top + h * .18} Q${-hw * .95} ${top} 0 ${top} Q${hw * .95} ${top} ${hw * .92} ${top + h * .18} L${hw * .8} ${unten - h * .1} Q${hw * .78} ${unten} 0 ${unten} Q${-hw * .78} ${unten} ${-hw * .8} ${unten - h * .1} Z`;
+    let s = '';
+    // Kufen (Sled-Gestell)
+    [-1, 1].forEach(k => s += `<line x1="${k * hw * .82}" y1="${-h / 2 + 3}" x2="${k * hw * .9}" y2="${h / 2 - 1}" stroke="${dunkel(f, .25)}" stroke-width="1.4" stroke-linecap="round" vector-effect="non-scaling-stroke"/>`);
+    s += `<defs><clipPath id="${id}"><path d="${schale}"/></clipPath></defs>`;
+    s += `<path d="${schale}" fill="${hell(f, .55)}" fill-opacity=".35"/>`;
+    s += `<g clip-path="url(#${id})" stroke="${f}" stroke-width=".9" vector-effect="non-scaling-stroke">`;
+    for (let x = -hw + 4; x < hw; x += 4.2) s += `<line x1="${x}" y1="${top}" x2="${x * .9}" y2="${unten}"/>`;
+    for (let y = top + 4; y < unten; y += 4.2) s += `<line x1="${-hw}" y1="${y}" x2="${hw}" y2="${y}"/>`;
+    s += `</g>`;
+    s += `<path d="${schale}" fill="none" stroke="${dunkel(f, .3)}" stroke-width="2" vector-effect="non-scaling-stroke"/>`;
+    return s;
+  };
+
   Z.schreibtisch = (w, h, f) => {
     let s = Z.tisch(w, h, f);
     s += rr(-28, -h / 2 + 6, 56, 6, 1, '#2b2b2b'); // Bildschirm
@@ -558,6 +576,7 @@
       ['Couchtisch schwarz gebürstet 34×34', 'metallTisch', 34, 34, '#2a2a2c', 0, { notiz: 'Kleiner quadratischer Couchtisch, gebürstetes Schwarz, 34 × 34 cm.' }],
       ['Drehstuhl IKEA KRYLBO (Tonerud blau)', 'drehstuhl4', 63, 63, '#2f5aa8', 0, { preis: 59.99, link: 'https://www.ikea.com/de/de/p/krylbo-drehstuhl-tonerud-blau-50573591/', notiz: 'KRYLBO Drehstuhl: Fuß Ø 63 cm, Sitz 55 B × 58 T, Höhe 77–88 cm, Sitzhöhe 46–58 cm. Zweite-Chance-Angebot 59,99 € (statt 79,99 €).' }],
       ['Teppich Tiger schwarz-weiß', 'teppichTiger', 160, 230, '#232326', 0, { ebene: 'boden', grund: '#ece6da', notiz: 'Schwarz-weiß gefleckter Teppich (Tigermuster). Größe angenommen 160 × 230 cm – rechts anpassen.' }],
+      ['Stuhl Roma (Draht, Chrom)', 'drahtstuhl', 44, 47, '#a9afb6', 0, { link: 'https://northdeco.com/de-de/products/silla-de-metal-roma?variant=56341861433730', notiz: 'Metallstuhl Roma (North Deco), Drahtgitter verchromt: 44 B × 47 T × 83,5 H cm, Sitzhöhe 48,5 cm.' }],
       ['Schreibtischplatte Büro Tom (Nussbaum)', 'holzplatte', 186, 63.5, '#7a4e2d', 100, { notiz: 'Massivholz-Arbeitsplatte Nussbaum, 186 × 63,5 cm, Stärke 3,8 cm.' }],
     ],
     'Wohnen': [
@@ -595,6 +614,7 @@
       ['Tisch Oval (Säulenfüße)', 'tischOval', 160, 90, '#6b4a2f', 75],
       ['Esstisch rund Ø110 + 4', 'esstischRund', 190, 190, '#c8a77e', 0, { tw: 110, stuehle: 4 }],
       ['Stuhl', 'stuhl', 45, 48, '#b38b63', 0],
+      ['Drahtstuhl', 'drahtstuhl', 44, 47, '#a9afb6', 0],
       ['Küchenzeile 270', 'kueche', 270, 60, '#f1f1ef', 120],
       ['Kühlschrank', 'geraet', 60, 65, '#e3e5e8', 90],
       ['Herd', 'herd', 60, 60, '#2a2a2a', 90],
