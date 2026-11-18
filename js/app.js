@@ -39,6 +39,8 @@
     return c;
   }
   const raumBei = (x, y) => G.rooms.find(r => inPoly(x, y, r.poly));
+  // Anzeigename eines Raums (je Variante umbenennbar; intern bleibt der Originalname der Schlüssel)
+  const raumName = r => (((akt().raeume || {})[r.name] || {}).titel || '').trim() || r.name;
 
   // ---------- Zustand ----------
   const LS = 'wohnplaner-v1', LS_ANSICHT = 'wohnplaner-ansicht';
@@ -418,7 +420,7 @@
       let cx = (x0 + x1) / 2, cy = (y0 + y1) / 2;
       if (!inPoly(cx, cy, r.poly)) { cx = r.poly[0][0] + 60; cy = r.poly[0][1] + 60; }
       const klein = (x1 - x0) * zoom < 90;
-      s += textLabel(cx, cy - px(klein ? 6 : 9), r.name, px(klein ? 11 : 15), '#3a3a3a', 0, true).replace(/class="lbl/g, 'class="lbl fett');
+      s += textLabel(cx, cy - px(klein ? 6 : 9), raumName(r), px(klein ? 11 : 15), '#3a3a3a', 0, true).replace(/class="lbl/g, 'class="lbl fett');
       s += textLabel(cx, cy + px(klein ? 7 : 10), r.flaeche.toFixed(2).replace('.', ',') + ' m²', px(klein ? 9.5 : 11.5), '#6a6a6a', 0, true);
     });
     G.extra.forEach(e => {
@@ -928,7 +930,9 @@
   function raumInspektor() {
     const r = G.rooms.find(q => q.name === raumAuswahl);
     const f = (akt().raeume || {})[r.name] || {};
-    insp.innerHTML = `<div class="kopf"><h3>${esc(r.name)}</h3><button class="x" data-a="zu">✕</button></div>
+    insp.innerHTML = `<div class="kopf"><h3>Raum</h3><button class="x" data-a="zu">✕</button></div>
+      ${feld('Name', `<input id="r-name" maxlength="40" value="${esc(raumName(r))}" placeholder="${esc(r.name)}">`)}
+      ${f.titel ? `<p class="hinweis" style="margin-top:-6px">Im Grundriss: ${esc(r.name)} · <a href="#" data-a="name-weg">zurücksetzen</a></p>` : ''}
       <p class="gross">${r.flaeche.toFixed(2).replace('.', ',')} m²</p>
       <p class="hinweis">${fmtM(r.box[2] - r.box[0])} × ${fmtM(r.box[3] - r.box[1])} m (größte Ausdehnung)</p>
       ${feld('Bodenfarbe', `<div class="farben">${BODEN.map(([n, c]) => `<button class="farbe${(f.boden || '#f7f4ee') === c ? ' an' : ''}" data-boden="${c}" style="background:${c}" title="${n}"></button>`).join('')}<input type="color" id="r-boden" value="${f.boden || '#f7f4ee'}"></div>`)}
@@ -948,6 +952,13 @@
     if (raumAuswahl && !it) {
       if (e.target.id === 'r-boden') { const rf = akt().raeume = akt().raeume || {}; (rf[raumAuswahl] = rf[raumAuswahl] || {}).boden = e.target.value; zeichneBau(); }
       if (e.target.id === 'r-wand') { const rf = akt().raeume = akt().raeume || {}; (rf[raumAuswahl] = rf[raumAuswahl] || {}).wand = e.target.value; zeichneBau(); }
+      if (e.target.id === 'r-name') {
+        const rf = akt().raeume = akt().raeume || {}, eintrag = rf[raumAuswahl] = rf[raumAuswahl] || {};
+        const v = e.target.value.trim();
+        if (v && v !== raumAuswahl) eintrag.titel = v.slice(0, 40); else delete eintrag.titel;
+        zeichneRaumNamen();
+        clearTimeout(insp.t); insp.t = setTimeout(aenderung, 600);
+      }
       return;
     }
     if (!it) return;
@@ -981,6 +992,8 @@
     aenderung(); zeichneItems(); if (e.target.id === 'i-farbe') inspektor();
   });
   insp.addEventListener('click', e => {
+    const a = e.target.closest('a[data-a="name-weg"]');
+    if (a) { e.preventDefault(); const e2 = (akt().raeume || {})[raumAuswahl]; if (e2) delete e2.titel; aenderung(); zeichneRaumNamen(); raumInspektor(); return; }
     const b = e.target.closest('button'); if (!b) return;
     const it = finde(auswahl);
     if (b.dataset.farbe && it) { it.farbe = b.dataset.farbe; aenderung(); zeichneItems(); inspektor(); return; }
@@ -997,7 +1010,7 @@
       case 'hinten': reihenfolge(false); break;
       case 'link': if (it && it.link) window.open(it.link, '_blank', 'noopener'); break;
       case 'vorlage': if (it) vorlageMerken(it); break;
-      case 'farben-weg': { const rf = akt().raeume || {}; delete rf[raumAuswahl]; aenderung(); zeichneBau(); raumInspektor(); } break;
+      case 'farben-weg': { const e2 = (akt().raeume || {})[raumAuswahl]; if (e2) { delete e2.boden; delete e2.wand; } aenderung(); zeichneBau(); raumInspektor(); } break;
     }
   });
 
@@ -1145,7 +1158,7 @@
     let summe = 0;
     const zeilen = items.map(i => {
       const r = raumBei(i.x, i.y); if (i.preis) summe += i.preis;
-      return `<tr><td>${esc(i.name)}${i.notiz ? `<div class="klein">${esc(i.notiz)}</div>` : ''}</td><td>${fmtCm(i.w)} × ${fmtCm(i.h)}</td><td>${r ? esc(r.name) : '–'}</td><td>${esc(i.status || '')}</td><td class="r">${i.preis ? i.preis.toLocaleString('de-DE') + ' €' : ''}</td><td>${i.link ? `<a href="${esc(i.link)}" target="_blank" rel="noopener">Link</a>` : ''}</td></tr>`;
+      return `<tr><td>${esc(i.name)}${i.notiz ? `<div class="klein">${esc(i.notiz)}</div>` : ''}</td><td>${fmtCm(i.w)} × ${fmtCm(i.h)}</td><td>${r ? esc(raumName(r)) : '–'}</td><td>${esc(i.status || '')}</td><td class="r">${i.preis ? i.preis.toLocaleString('de-DE') + ' €' : ''}</td><td>${i.link ? `<a href="${esc(i.link)}" target="_blank" rel="noopener">Link</a>` : ''}</td></tr>`;
     }).join('');
     dialog(`<h3>Übersicht „${esc(akt().name)}“</h3><div class="tabelle"><table><thead><tr><th>Möbel</th><th>Maße (cm)</th><th>Raum</th><th>Status</th><th class="r">Preis</th><th></th></tr></thead><tbody>${zeilen || '<tr><td colspan="6">Noch keine Möbel.</td></tr>'}</tbody><tfoot><tr><td colspan="4">Summe</td><td class="r">${summe.toLocaleString('de-DE')} €</td><td></td></tr></tfoot></table></div><div class="knoepfe"><button data-zu>Schließen</button></div>`, true);
   });
