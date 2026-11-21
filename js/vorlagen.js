@@ -325,7 +325,7 @@
       s += `<rect x="${-w / 2 + .6}" y="${y}" width="${w - 1.2}" height="${(h - 1.2) / n + .1}" fill="${t < .4 ? dunkel(f, .05 + t * .12) : hell(f, (t - .4) * .2)}"/>`;
       s += `<line x1="${-w / 2 + 1}" y1="${y + 1.3}" x2="${w / 2 - 1}" y2="${y + 1.1 + t}" stroke="${dunkel(f, .18)}" stroke-width=".25"/>`;
     }
-    [[-1, -1], [1, -1], [-1, 1], [1, 1], [0, -1], [0, 1]].forEach(([kx, ky]) =>
+    [[-1, -1], [1, -1], [-1, 1], [1, 1], ...(it.mitte === false ? [] : [[0, -1], [0, 1]])].forEach(([kx, ky]) =>
       s += `<rect x="${kx * (w / 2 - pf / 2) - pf / 2}" y="${ky * (h / 2 - pf / 2) - pf / 2}" width="${pf}" height="${pf}" fill="${metall}"/>`);
     s += `<rect x="${-w / 2}" y="${-h / 2}" width="${w}" height="${h}" rx="1" fill="none" stroke="${metall}" ${S}/>`;
     return s;
@@ -543,6 +543,17 @@
     [[14, 14], [42, 14], [14, 36], [42, 36]].forEach(([x, y]) => s += `<circle cx="${kx + x}" cy="${-h / 2 + 6 + y * (h - 14) / 52}" r="9" fill="none" stroke="#666" stroke-width="1" vector-effect="non-scaling-stroke"/>`);
     return s;
   };
+  // Badewanne von oben: Rand/Fliesenverkleidung, innen die Wanne, Armatur + Ablauf am linken Ende
+  Z.badewanne = (w, h, f) => {
+    const rand = Math.min(8, Math.min(w, h) * .12), iw = w - 2 * rand, ih = h - 2 * rand;
+    let s = rr(-w / 2, -h / 2, w, h, 3, f);
+    s += rr(-iw / 2, -ih / 2, iw, ih, Math.min(ih / 2.2, 22), hell(f, .35));
+    s += rr(-iw / 2 + 4, -ih / 2 + 4, iw - 8, ih - 8, Math.min(ih / 2.6, 18), hell(f, .6));
+    s += kreis(-iw / 2 + Math.min(14, iw * .1), 0, 2.2, '#b9bec4');
+    s += rr(-w / 2 + 1, -2.5, rand + 3, 5, 1.5, '#b9bec4');
+    return s;
+  };
+
   Z.geraet = (w, h, f) => rr(-w / 2, -h / 2, w, h, 2, f) + rr(-w / 2 + 3, -h / 2 + 3, w - 6, h - 6, 2, hell(f, .2)) + linie(-w / 2 + 4, h / 2 - 3, w / 2 - 4, h / 2 - 3, dunkel(f, .4), 2);
   Z.herd = (w, h, f) => {
     let s = rr(-w / 2, -h / 2, w, h, 2, '#2a2a2a');
@@ -626,6 +637,7 @@
       ['Teppich Tiger schwarz-weiß', 'teppichTiger', 160, 230, '#232326', 0, { ebene: 'boden', grund: '#ece6da', notiz: 'Schwarz-weiß gefleckter Teppich (Tigermuster). Größe angenommen 160 × 230 cm – rechts anpassen.' }],
       ['Stuhl Roma (Draht, Chrom)', 'drahtstuhl', 44, 47, '#a9afb6', 0, { link: 'https://northdeco.com/de-de/products/silla-de-metal-roma?variant=56341861433730', notiz: 'Metallstuhl Roma (North Deco), Drahtgitter verchromt: 44 B × 47 T × 83,5 H cm, Sitzhöhe 48,5 cm.' }],
       ['Regal IKEA FJÄLLBO (schwarz)', 'regalIndustrie', 100, 36, '#b48a5c', 60, { rahmen: '#1f1f21', link: 'https://www.ikea.com/de/de/p/fjaellbo-regal-schwarz-50339292/', notiz: 'FJÄLLBO Regal schwarz: 100 B × 36 T × 95 H cm. Oben offen mit 2 Holzböden, unten 2 Gittertüren (Freifläche zum Öffnen).' }],
+      ['IKEA BROR Arbeitstisch mit Schubladen', 'regalIndustrie', 85, 40, '#e2cfa6', 60, { rahmen: '#1f1f21', mitte: false, link: 'https://www.ikea.com/de/de/p/bror-arbeitstisch-mit-schubladen-schwarz-kiefersperrholz-70494300/', notiz: 'BROR Arbeitstisch schwarz/Kiefernsperrholz: 85 B × 40 T × 89 H cm, 4 Metallschubladen (innen ca. 74 × 37 cm, 16 cm hoch). Freifläche vorne = Platz zum Herausziehen der Schubladen.' }],
       ['Schreibtischplatte Büro Tom (Nussbaum)', 'holzplatte', 186, 63.5, '#7a4e2d', 100, { notiz: 'Massivholz-Arbeitsplatte Nussbaum, 186 × 63,5 cm, Stärke 3,8 cm.' }],
     ],
     'Wohnen': [
@@ -703,6 +715,8 @@
       ['Sitzsack', 'sitzsack', 80, 80, '#e07a5f', 0],
     ],
     'Bad & Technik': [
+      ['Badewanne 170 × 75', 'badewanne', 170, 75, '#f4f4f2', 70, { notiz: 'Rechteckige Wanne, Standardmaß 170 × 75 cm (Bad: geschätzt aus dem Exposé-Foto, evtl. 160 × 70 – vor Ort nachmessen). Größe rechts frei änderbar. Armatur und Ablauf am linken Ende.' }],
+      ['Waschtrockner', 'wama', 60, 60, '#f2f2f2', 90, { notiz: 'Waschtrockner (ein Gerät): ca. 60 B × 55–65 T × 85 H cm.' }],
       ['Waschmaschine', 'wama', 60, 60, '#f2f2f2', 90],
       ['Trockner', 'wama', 60, 60, '#f2f2f2', 90],
       ['Wäscheständer', 'waeschestaender', 180, 60, '#cccccc', 0],
